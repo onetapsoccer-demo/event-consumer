@@ -28,7 +28,7 @@ public class EventsResource {
     @Inject
     MeterRegistry registry;
 
-    String[] players = { "Ronaldo", "Suarez", "João", "Ibrahimovic" };
+    String[] players = { "Ronaldo", "Suarez", "Lewandowski", "Ibrahimovic" };
 
     @Inject
     Logger logger;
@@ -44,11 +44,16 @@ public class EventsResource {
         logger.debug("GreetingResource.get()");
     }
 
+    /*
+     * player = posicao do jogador selecionado: 0, 1, 2, 3
+     * user = UUID gerado para o usuário que irá jogar. Ele terá o mesmo valor para partidas diferentes
+     */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Blocking
-    public CompletionStage<Void> post(@FormParam("kind") String kind, @FormParam("player") int player,
-            @FormParam("score") Integer score,
+    public CompletionStage<Void> post(
+        @FormParam("kind") String kind, @FormParam("player") int player,
+        @FormParam("user") String user, @FormParam("score") Integer score,
             MultivaluedMap<String, String> form) {
 
         logger.debug("-------------");
@@ -66,7 +71,7 @@ public class EventsResource {
 
         registry.counter("com.redhat.onetapsoccer." + kind).increment();
 
-        Event event = new Event(kind, players[player], score);
+        Event event = new Event(kind, players[player], score, user);
         return eventEmitter.send(event);
     }
 
