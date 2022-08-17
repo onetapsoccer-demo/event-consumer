@@ -59,17 +59,22 @@ public class EventsResource {
         logger.debug("-------------");
         logger.debugf("CHEGOU UM EVENTO: %s", kind);
         List<Tag> tags = new ArrayList<>();
-        for (Entry<String, List<String>> entry : form.entrySet()) {
-            logger.debug(entry.getKey());
-            logger.debug(entry.getValue());
-            tags.add(Tag.of(entry.getKey(), entry.getValue().get(0)));
-        }
+        
+        // for (Entry<String, List<String>> entry : form.entrySet()) {
+        //     logger.debug(entry.getKey());
+        //     logger.debug(entry.getValue());
+        //     tags.add(Tag.of(entry.getKey(), entry.getValue().get(0)));
+        // }
 
+        tags.add(Tag.of("kind", ""+kind));
+        tags.add(Tag.of("user", ""+user));
         tags.add(Tag.of("player", players[player]));
-
+        tags.add(Tag.of("score", ""+score));
+        
+        logger.debugf("TAGS: %s", tags);
         registry.counter("com.redhat.onetapsoccer", tags).increment();
 
-        registry.counter("com.redhat.onetapsoccer." + kind).increment();
+        registry.counter("com.redhat.onetapsoccer." + kind, tags).increment();
 
         Event event = new Event(kind, players[player], score, user);
         return eventEmitter.send(event);
