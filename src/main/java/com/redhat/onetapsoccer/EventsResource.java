@@ -60,6 +60,7 @@ public class EventsResource {
     public CompletionStage<Void> post(
             @FormParam("kind") String kind, @FormParam("player") int player,
             @FormParam("user") String user, @FormParam("score") Integer score,
+            @FormParam("userName") String userName,
             MultivaluedMap<String, String> form) {
 
         logger.debug("-------------");
@@ -74,8 +75,9 @@ public class EventsResource {
 
         tags.add(Tag.of("kind", "" + kind));
         tags.add(Tag.of("user", "" + user));
+        tags.add(Tag.of("userName", userName));
         tags.add(Tag.of("player", players[player]));
-        
+
         // tags.add(Tag.of("score", "" + score));
 
         logger.debugf("TAGS: %s", tags);
@@ -88,30 +90,31 @@ public class EventsResource {
 
         // Counter per Game Over/Score
         if ("game_over".equals(kind)) {
-            // Its working for this Demo, =D. 
+            // Its working for this Demo, =D.
             // Do not use in Prodution
-            gameOverMetric(user, score);
+            gameOverMetric(user, userName, score);
         }
 
         Event event = new Event(kind, players[player], score, user);
         return eventEmitter.send(event);
     }
 
-    private void gameOverMetric(String user, Integer score) {
+    private void gameOverMetric(String user, String userName, Integer score) {
         List<Tag> tags = new ArrayList<>();
         // change user per name?
         tags.add(Tag.of("user", "" + user));
+        tags.add(Tag.of("userName", userName));
         Score scoreObj = new Score(score);
-        Score scoreMapped = mapUserMaxScore.get(user);
-        if(scoreMapped == null) {
-            mapUserMaxScore.put(user, scoreObj);
+        String userKey = user+userName;
+        Score scoreMapped = mapUserMaxScore.get(userKey);
+        if (scoreMapped == null) {
+            mapUserMaxScore.put(userKey, scoreObj);
             Gauge.builder("com.redhat.onetapsoccer.score", scoreObj, (v) -> {
                 return v.getValue();
             }).tags(tags).register(registry);
-        }else {
+        } else {
             scoreMapped.setMaxValue(score);
         }
-        
 
     }
 
