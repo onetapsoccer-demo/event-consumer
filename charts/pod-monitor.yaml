@@ -16,4 +16,5 @@ spec:
       targetPort: 8080
   selector:
     matchLabels:
-      app.kubernetes.io/name: event-consumer
+      app: one-tap-soccer-event-consumer
+

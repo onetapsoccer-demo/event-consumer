@@ -1,3 +1,3 @@
-FROM nginx:1.23.1
+FROM nginxinc/nginx-unprivileged:1.23.1
 
 COPY build/ /usr/share/nginx/html/

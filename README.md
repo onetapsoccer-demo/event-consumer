@@ -19,15 +19,23 @@ The application can be packaged using:
 ```shell script
 ./mvnw package
 ```
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-If you want to build an _über-jar_, execute the following command:
 ```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
+docker build -f src/main/docker/Dockerfile.jvm -t quarkus/event-consumer-jvm .
 ```
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+```shell script
+docker tag quarkus/event-consumer-jvm:latest viniciusfcf/
+one-tap-soccer-event-consumer:latest
+```
+```shell script
+docker push viniciusfcf/one-tap-soccer-event-consumer:latest
+```
+
+## Images
+
+Game: ```viniciusfcf/one-tap-soccer:latest```
+
+Event consumer: ```viniciusfcf/one-tap-soccer-event-consumer:latest```
 
 ## Creating a native executable
 
