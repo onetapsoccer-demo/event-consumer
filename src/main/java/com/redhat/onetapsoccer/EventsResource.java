@@ -95,7 +95,7 @@ public class EventsResource {
             gameOverMetric(user, userName, score);
         }
 
-        Event event = new Event(kind, players[player], score, user);
+        Event event = new Event(kind, players[player], score, user, userName);
         return eventEmitter.send(event);
     }
 

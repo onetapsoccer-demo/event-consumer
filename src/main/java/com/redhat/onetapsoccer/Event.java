@@ -6,12 +6,14 @@ public class Event {
     private String player;
     private Integer score;
     private String user;
+    private String userName;
 
-    public Event(String kind, String player, Integer score, String user) {
+    public Event(String kind, String player, Integer score, String user, String userName) {
         this.kind = kind;
         this.player = player;
         this.score = score;
         this.user = user;
+        this.userName = userName;
     }
 
     public String getUser() {
@@ -28,5 +30,9 @@ public class Event {
 
     public Integer getScore() {
         return score;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 }
