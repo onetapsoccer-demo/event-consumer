@@ -31,7 +31,7 @@ public class EventsResource {
     @Inject
     MeterRegistry registry;
 
-    String[] players = { "Ronaldo", "Suarez", "Lewandowski", "Ibrahimovic" };
+    String[] players = { "Ansible", "OpenShift", "RHEL", "Cloud Services" };
 
     @Inject
     Logger logger;

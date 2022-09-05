@@ -24,8 +24,7 @@ docker build -f src/main/docker/Dockerfile.jvm -t quarkus/event-consumer-jvm .
 ```
 
 ```shell script
-docker tag quarkus/event-consumer-jvm:latest viniciusfcf/
-one-tap-soccer-event-consumer:latest
+docker tag quarkus/event-consumer-jvm:latest viniciusfcf/one-tap-soccer-event-consumer:latest
 ```
 
 ```shell script
