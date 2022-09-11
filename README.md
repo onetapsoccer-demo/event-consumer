@@ -6,6 +6,24 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 
 ## Running the application in dev mode
 
+### Using a Strimzi Broker in Openshift
+
+Set the variables:
+
+```
+PROJECT=kafka-cluster
+EVENTCONSUMER_PWD=$(oc get secret event-consumer -n $PROJECT  -o jsonpath='{.data.password}' | base64 -d )
+BOOTSTRAP_URL=$(oc get route my-cluster-kafka-bootstrap -n $PROJECT -o jsonpath='{.spec.host}'):443
+```
+
+Run: 
+
+```
+mvn clean quarkus:dev -Dbootstrap.url=$BOOTSTRAP_URL  -Deventconsumer.pwd=$EVENTCONSUMER_PWD
+```
+
+### Local
+
 You can run your application in dev mode that enables live coding using:
 ```shell script
 ./mvnw compile quarkus:dev
@@ -30,7 +48,6 @@ docker tag quarkus/event-consumer-jvm:latest viniciusfcf/one-tap-soccer-event-co
 ```shell script
 docker push viniciusfcf/one-tap-soccer-event-consumer:latest
 ```
-
 
 or
 
