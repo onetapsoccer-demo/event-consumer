@@ -21,6 +21,14 @@
 # docker run -i --rm -p 8080:8080 -p 5005:5005 -e JAVA_ENABLE_DEBUG="true" quarkus/event-consumer-legacy-jar
 #
 ###
+
+FROM adoptopenjdk/maven-openjdk11 as build
+  
+COPY src /usr/src/app/src
+COPY pom.xml /usr/src/app
+WORKDIR /usr/src/app
+RUN mvn package
+
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.4 
 
 ARG JAVA_PACKAGE=java-11-openjdk-headless
@@ -42,8 +50,10 @@ RUN microdnf install curl ca-certificates ${JAVA_PACKAGE} \
 
 # Configure the JAVA_OPTIONS, you can add -XshowSettings:vm to also display the heap size.
 ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
-COPY target/lib/* /deployments/lib/
-COPY target/*-runner.jar /deployments/app.jar
+# COPY target/lib/* /deployments/lib/
+# COPY target/*-runner.jar /deployments/app.jar
+COPY --from=build /usr/src/app/target/*-runner.jar /deployments/app.jar
+
 
 EXPOSE 8080
 USER 1001
