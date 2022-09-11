@@ -1,27 +1,3 @@
-####
-# This Dockerfile is used in order to build a container that runs the Quarkus application in JVM mode
-#
-# Before building the container image run:
-#
-# ./mvnw package -Dquarkus.package.type=legacy-jar
-#
-# Then, build the image with:
-#
-# docker build -f src/main/docker/Dockerfile.legacy-jar -t quarkus/event-consumer-legacy-jar .
-#
-# Then run the container using:
-#
-# docker run -i --rm -p 8080:8080 quarkus/event-consumer-legacy-jar
-#
-# If you want to include the debug port into your docker image
-# you will have to expose the debug port (default 5005) like this :  EXPOSE 8080 5005
-#
-# Then run the container using :
-#
-# docker run -i --rm -p 8080:8080 -p 5005:5005 -e JAVA_ENABLE_DEBUG="true" quarkus/event-consumer-legacy-jar
-#
-###
-
 FROM adoptopenjdk/maven-openjdk11 as build
   
 COPY src /usr/src/app/src
@@ -50,10 +26,7 @@ RUN microdnf install curl ca-certificates ${JAVA_PACKAGE} \
 
 # Configure the JAVA_OPTIONS, you can add -XshowSettings:vm to also display the heap size.
 ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
-# COPY target/lib/* /deployments/lib/
-# COPY target/*-runner.jar /deployments/app.jar
 COPY --from=build /usr/src/app/target/*-runner.jar /deployments/app.jar
-
 
 EXPOSE 8080
 USER 1001
