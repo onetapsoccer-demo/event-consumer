@@ -1,27 +1,3 @@
-####
-# This Dockerfile is used in order to build a container that runs the Quarkus application in JVM mode
-#
-# Before building the container image run:
-#
-# ./mvnw package
-#
-# Then, build the image with:
-#
-# docker build -f src/main/docker/Dockerfile.jvm-multi -t quarkus/event-consumer-jvm-multi .
-#
-# Then run the container using:
-#
-# docker run -i --rm -p 8080:8080 quarkus/event-consumer-jvm-multi
-#
-# If you want to include the debug port into your docker image
-# you will have to expose the debug port (default 5005) like this :  EXPOSE 8080 5005
-#
-# Then run the container using :
-#
-# docker run -i --rm -p 8080:8080 -p 5005:5005 -e JAVA_ENABLE_DEBUG="true" quarkus/event-consumer-jvm-multi
-#
-###
-
 FROM adoptopenjdk/maven-openjdk11 as BUILD
   
 COPY src /usr/src/app/src
