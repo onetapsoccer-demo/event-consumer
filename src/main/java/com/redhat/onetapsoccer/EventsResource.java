@@ -49,11 +49,6 @@ public class EventsResource {
         logger.debug("GreetingResource.get()");
     }
 
-    /*
-     * player = posicao do jogador selecionado: 0, 1, 2, 3
-     * user = UUID gerado para o usuário que irá jogar. Ele terá o mesmo valor para
-     * partidas diferentes
-     */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Blocking
@@ -63,29 +58,20 @@ public class EventsResource {
             @FormParam("userName") String userName,
             MultivaluedMap<String, String> form) {
 
-        logger.debug("-------------");
-        logger.debugf("CHEGOU UM EVENTO: %s", kind);
-        List<Tag> tags = new ArrayList<>();
+        createMetrics(kind, player, user, score, userName);
 
-        // for (Entry<String, List<String>> entry : form.entrySet()) {
-        // logger.debug(entry.getKey());
-        // logger.debug(entry.getValue());
-        // tags.add(Tag.of(entry.getKey(), entry.getValue().get(0)));
-        // }
+        //Send to Kafka
+        Event event = new Event(kind, players[player], score, user, userName);
+        return eventEmitter.send(event);
+    }
 
-        tags.add(Tag.of("kind", "" + kind));
-        tags.add(Tag.of("user", "" + user));
-        tags.add(Tag.of("userName", userName));
-        tags.add(Tag.of("player", players[player]));
-
-        // tags.add(Tag.of("score", "" + score));
-
-        logger.debugf("TAGS: %s", tags);
+    private void createMetrics(String kind, int player, String user, Integer score, String userName) {
+        List<Tag> tags = initTags(kind, player, user, userName);
 
         // Generic counter
         registry.counter("com.redhat.onetapsoccer", tags).increment();
 
-        // Counter per kind
+        // Counter per event kind
         registry.counter("com.redhat.onetapsoccer." + kind, tags).increment();
 
         // Counter per Game Over/Score
@@ -94,9 +80,16 @@ public class EventsResource {
             // Do not use in Prodution
             gameOverMetric(user, userName, score);
         }
+    }
 
-        Event event = new Event(kind, players[player], score, user, userName);
-        return eventEmitter.send(event);
+    private List<Tag> initTags(String kind, int player, String user, String userName) {
+        List<Tag> tags = new ArrayList<>();
+
+        tags.add(Tag.of("kind", "" + kind));
+        tags.add(Tag.of("user", "" + user));
+        tags.add(Tag.of("userName", userName));
+        tags.add(Tag.of("player", players[player]));
+        return tags;
     }
 
     private void gameOverMetric(String user, String userName, Integer score) {
