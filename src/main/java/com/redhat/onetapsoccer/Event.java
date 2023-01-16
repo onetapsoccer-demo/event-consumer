@@ -1,5 +1,8 @@
 package com.redhat.onetapsoccer;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
+@RegisterForReflection
 public class Event {
 
     private String kind;
