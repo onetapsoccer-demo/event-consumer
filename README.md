@@ -19,10 +19,10 @@ BOOTSTRAP_URL=$(oc get route my-cluster-kafka-bootstrap -n $PROJECT -o jsonpath=
 Run: 
 
 ```
-mvn clean quarkus:dev -Dbootstrap.url=$BOOTSTRAP_URL  -Deventconsumer.pwd=$EVENTCONSUMER_PWD
+mvn clean quarkus:dev -Dquarkus.profile=remoteKafka -Dbootstrap.url=$BOOTSTRAP_URL  -Deventconsumer.pwd=$EVENTCONSUMER_PWD
 ```
 
-### Local
+### All Local
 
 You can run your application in dev mode that enables live coding using:
 ```shell script
@@ -74,10 +74,33 @@ You can create a native executable using:
 
 Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
 ```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
+./mvnw clean package -Pnative -Dquarkus.native.container-build=true -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
 ```
 
 You can then execute your native executable with: `./target/event-consumer-1.0.0-SNAPSHOT-runner`
+
+```shell script
+docker build -f src/main/docker/Dockerfile.native -t quarkus/event-consumer-native .
+```
+
+```shell script
+docker tag quarkus/event-consumer-native:latest viniciusfcf/one-tap-soccer-event-consumer-native:latest
+```
+
+```shell script
+docker push viniciusfcf/one-tap-soccer-event-consumer-native:latest
+```
+
+or
+
+```shell script
+docker tag quarkus/event-consumer-native:latest quay.io/vflorent/one-tap-soccer-event-consumer-native:latest
+```
+
+```shell script
+docker push quay.io/vflorent/one-tap-soccer-event-consumer-native:latest
+```
+
 
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.html.
 
